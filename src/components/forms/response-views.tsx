@@ -9,8 +9,8 @@ import { apiRequest, isSuccess } from "@/lib/api";
 import { displayAnswer, flattenQuestions } from "@/lib/answers";
 import { canEditForm } from "@/lib/permissions";
 import { useAuth } from "@/lib/auth";
-import { formatDateTime, toQuery } from "@/lib/text";
-import type { Submission } from "@/types/domain";
+import { cn, formatDateTime, toQuery } from "@/lib/text";
+import type { Question, Submission } from "@/types/domain";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -40,7 +40,12 @@ export function ResponseList({ formId }: { formId: string }) {
       <PageHeader
         title={formState.envelope?.form?.title ?? "Respostas"}
         description="Responsáveis veem todas as respostas. Os demais veem as próprias."
-        action={<Link href={`/forms/${formId}`} className="text-sm font-medium text-brand">Voltar ao formulário</Link>}
+        action={
+          <div className="flex gap-4">
+            {canModerate ? <Link href={`/forms/${formId}/report`} className="text-sm font-medium text-brand">Relatório</Link> : null}
+            <Link href={`/forms/${formId}`} className="text-sm font-medium text-brand">Voltar ao formulário</Link>
+          </div>
+        }
       />
       {feedback ? <Alert tone="info">{feedback}</Alert> : null}
       {listState.loading ? <p className="text-sm text-muted">Carregando respostas...</p> : null}
@@ -90,11 +95,56 @@ export function ResponseList({ formId }: { formId: string }) {
   );
 }
 
+function hasTextAnswer(value: string | string[]): boolean {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function canFavoriteQuestion(question: Question | undefined, value: string | string[]): boolean {
+  if (!question) return false;
+  if (question.type !== "short" && question.type !== "long") return false;
+  return hasTextAnswer(value);
+}
+
+function FavoriteStar({ active }: { active: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={cn("h-5 w-5", active ? "fill-amber-400 text-amber-400" : "fill-none text-muted")}>
+      <path
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+        d="M12 3.2 14.4 8.1l5.4.8-3.9 3.8.9 5.4L12 15.6 7.2 18.1l.9-5.4-3.9-3.8 5.4-.8L12 3.2z"
+      />
+    </svg>
+  );
+}
+
 export function ResponseDetail({ formId, responseId }: { formId: string; responseId: string }) {
+  const { session } = useAuth();
+  const [overrides, setOverrides] = useState<Record<string, boolean>>({});
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<string | null>(null);
   const formState = useEnvelope(`/forms/${formId}`);
   const responseState = useEnvelope(`/forms/${formId}/responses/${responseId}`);
   const questions = formState.envelope?.form ? flattenQuestions(formState.envelope.form) : [];
   const submission = responseState.envelope?.response;
+  const canModerate = canEditForm(formState.envelope?.form?.my_role, session?.user?.permissions);
+
+  async function toggleFavorite(questionId: string, currently: boolean) {
+    setPendingId(questionId);
+    setFeedback(null);
+    const result = currently
+      ? await apiRequest(`/forms/${formId}/responses/${responseId}/favorites/${questionId}`, { method: "DELETE" })
+      : await apiRequest(`/forms/${formId}/responses/${responseId}/favorites`, {
+          method: "POST",
+          body: { question_id: questionId },
+        });
+    setPendingId(null);
+    if (isSuccess(result)) {
+      setOverrides((current) => ({ ...current, [questionId]: !currently }));
+      return;
+    }
+    setFeedback(result.message);
+  }
 
   if (responseState.loading) return <p className="text-sm text-muted">Carregando resposta...</p>;
   if (!submission || (responseState.envelope && responseState.envelope.status >= 400)) {
@@ -108,12 +158,27 @@ export function ResponseDetail({ formId, responseId }: { formId: string; respons
         description={`${submission.respondent_email ? `${submission.respondent_email} · ` : ""}${formatDateTime(submission.created_at)}`}
         action={<Link href={`/forms/${formId}/responses`} className="text-sm font-medium text-brand">Voltar</Link>}
       />
+      {feedback ? <Alert tone="error">{feedback}</Alert> : null}
       <ul className="space-y-3">
         {submission.answers.map((answer) => {
           const question = questions.find((item) => item.id === answer.question_id);
+          const favorited = overrides[answer.question_id] ?? Boolean(answer.favorited);
+          const showStar = canModerate && canFavoriteQuestion(question, answer.value);
           return (
-            <li key={answer.question_id} className="rounded-2xl border border-border bg-card p-4">
-              <p className="text-sm text-muted">{question?.title ?? "Pergunta removida"}</p>
+            <li key={answer.question_id} className="relative rounded-2xl border border-border bg-card p-4">
+              {showStar ? (
+                <button
+                  type="button"
+                  className="absolute top-3 right-3 rounded-md p-1 disabled:cursor-not-allowed disabled:opacity-60"
+                  aria-label={favorited ? "Remover dos favoritos" : "Favoritar resposta"}
+                  aria-pressed={favorited}
+                  disabled={pendingId === answer.question_id}
+                  onClick={() => void toggleFavorite(answer.question_id, favorited)}
+                >
+                  <FavoriteStar active={favorited} />
+                </button>
+              ) : null}
+              <p className={cn("text-sm text-muted", showStar && "pr-8")}>{question?.title ?? "Pergunta removida"}</p>
               <p className="mt-1 whitespace-pre-wrap">{displayAnswer(question, answer.value)}</p>
             </li>
           );

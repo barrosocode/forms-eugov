@@ -38,24 +38,24 @@ Toda resposta é um objeto. Sucesso:
 
 ```json
 {
-  "status": 200,
-  "message": "Mensagem em português",
-  "errors": {},
-  "recurso": {},
-  "error_code": null
+    "status": 200,
+    "message": "Mensagem em português",
+    "errors": {},
+    "recurso": {},
+    "error_code": null
 }
 ```
 
-A chave do recurso muda conforme a rota: `health`, `auth`, `user`, `users`, `role`, `roles`, `form`, `forms`, `section`, `sections`, `question`, `questions`, `option`, `options`, `member`, `members`, `response`, `responses`.
+A chave do recurso muda conforme a rota: `health`, `auth`, `user`, `users`, `role`, `roles`, `form`, `forms`, `section`, `sections`, `question`, `questions`, `option`, `options`, `member`, `members`, `response`, `responses`, `favorite`, `favorites`, `favorite_summary`, `report`.
 
 Listas incluem `pagination`. Respostas de um único item não trazem essa chave.
 
 ```json
 {
-  "page": 1,
-  "page_size": 15,
-  "total_items": 42,
-  "total_pages": 3
+    "page": 1,
+    "page_size": 15,
+    "total_items": 42,
+    "total_pages": 3
 }
 ```
 
@@ -65,28 +65,28 @@ Erro:
 
 ```json
 {
-  "status": 422,
-  "message": "Erro de validação.",
-  "errors": {
-    "email": ["O campo email é obrigatório."]
-  },
-  "resource": null,
-  "pagination": null,
-  "error_code": "VALIDATION_ERROR"
+    "status": 422,
+    "message": "Erro de validação.",
+    "errors": {
+        "email": ["O campo email é obrigatório."]
+    },
+    "resource": null,
+    "pagination": null,
+    "error_code": "VALIDATION_ERROR"
 }
 ```
 
 Em erro de validação de entrada a chave do recurso é `resource`. Em `401` ela é `auth`. Nos demais erros de regra ela acompanha o recurso da rota (`user`, `form`, `response`, etc.).
 
-| HTTP | `error_code` | Quando acontece |
-| --- | --- | --- |
-| 401 | `HTTP_401` | Sem token, token inválido ou credenciais de login inválidas |
-| 403 | `HTTP_403` | Autenticado, mas sem permissão ou sem ser owner |
-| 404 | `HTTP_404` | Rota ou registro inexistente |
-| 405 | `HTTP_405` | Método não aceito na rota |
-| 409 | `HTTP_409` | Email, CPF, nome de papel ou membro duplicado |
-| 422 | `VALIDATION_ERROR` | Corpo, query ou regra de negócio inválidos |
-| 500 | `HTTP_500` | Falha interna. A mensagem não descreve o erro técnico |
+| HTTP | `error_code`       | Quando acontece                                             |
+| ---- | ------------------ | ----------------------------------------------------------- |
+| 401  | `HTTP_401`         | Sem token, token inválido ou credenciais de login inválidas |
+| 403  | `HTTP_403`         | Autenticado, mas sem permissão ou sem ser owner             |
+| 404  | `HTTP_404`         | Rota ou registro inexistente                                |
+| 405  | `HTTP_405`         | Método não aceito na rota                                   |
+| 409  | `HTTP_409`         | Email, CPF, nome de papel ou membro duplicado               |
+| 422  | `VALIDATION_ERROR` | Corpo, query ou regra de negócio inválidos                  |
+| 500  | `HTTP_500`         | Falha interna. A mensagem não descreve o erro técnico       |
 
 Login com senha errada, usuário inexistente ou usuário inativo responde sempre `401` com a mensagem `Credenciais inválidas.`
 
@@ -94,18 +94,18 @@ Campos desconhecidos no JSON são recusados. Datas saem em ISO 8601 com fuso UTC
 
 ## Saúde
 
-| Método | Rota | Auth |
-| --- | --- | --- |
-| GET | `/health` | Pública |
-| GET | `/api/v1/health` | Pública |
+| Método | Rota             | Auth    |
+| ------ | ---------------- | ------- |
+| GET    | `/health`        | Pública |
+| GET    | `/api/v1/health` | Pública |
 
 ```json
 {
-  "status": 200,
-  "message": "Serviço operando normalmente.",
-  "errors": {},
-  "health": { "status": "ok", "timestamp": "2026-09-29T20:00:00+00:00" },
-  "error_code": null
+    "status": 200,
+    "message": "Serviço operando normalmente.",
+    "errors": {},
+    "health": {"status": "ok", "timestamp": "2026-09-29T20:00:00+00:00"},
+    "error_code": null
 }
 ```
 
@@ -116,7 +116,7 @@ Campos desconhecidos no JSON são recusados. Datas saem em ISO 8601 com fuso UTC
 Público.
 
 ```json
-{ "email": "admin@example.com", "password": "password123" }
+{"email": "admin@example.com", "password": "password123"}
 ```
 
 `password` tem de 8 a 72 caracteres.
@@ -125,9 +125,9 @@ Sucesso `200`, chave `auth`:
 
 ```json
 {
-  "access_token": "<jwt>",
-  "token_type": "bearer",
-  "expires_in": 900
+    "access_token": "<jwt>",
+    "token_type": "bearer",
+    "expires_in": 900
 }
 ```
 
@@ -148,7 +148,7 @@ Erros: `401` token ausente, expirado, revogado ou reutilizado.
 Access token. Invalida os refresh tokens do usuário e apaga o cookie.
 
 ```json
-{ "logged_out": true }
+{"logged_out": true}
 ```
 
 ### GET `/api/v1/auth/me`
@@ -161,13 +161,13 @@ Atualização parcial: só os campos enviados mudam. Enviar `null` em `phone`, `
 
 ```json
 {
-  "name": "Ana Lima",
-  "email": "ana@example.com",
-  "phone": "11987654321",
-  "cpf": "529.982.247-25",
-  "avatar_url": "https://example.com/avatar.png",
-  "password": "novaSenha1",
-  "current_password": "password123"
+    "name": "Ana Lima",
+    "email": "ana@example.com",
+    "phone": "11987654321",
+    "cpf": "529.982.247-25",
+    "avatar_url": "https://example.com/avatar.png",
+    "password": "novaSenha1",
+    "current_password": "password123"
 }
 ```
 
@@ -183,30 +183,30 @@ O objeto de usuário, fora de `/auth/me`, não inclui `cpf` nem senha. Listagem 
 
 ```json
 {
-  "id": "uuid",
-  "name": "Ana Lima",
-  "email": "ana@example.com",
-  "phone": "11987654321",
-  "avatar_url": null,
-  "status": "active",
-  "email_verified_at": "2026-09-29T20:00:00+00:00",
-  "last_login_at": null,
-  "roles": [{ "id": "uuid", "name": "user", "display_name": "Usuário" }],
-  "created_at": "2026-09-29T20:00:00+00:00",
-  "updated_at": "2026-09-29T20:00:00+00:00"
+    "id": "uuid",
+    "name": "Ana Lima",
+    "email": "ana@example.com",
+    "phone": "11987654321",
+    "avatar_url": null,
+    "status": "active",
+    "email_verified_at": "2026-09-29T20:00:00+00:00",
+    "last_login_at": null,
+    "roles": [{"id": "uuid", "name": "user", "display_name": "Usuário"}],
+    "created_at": "2026-09-29T20:00:00+00:00",
+    "updated_at": "2026-09-29T20:00:00+00:00"
 }
 ```
 
 `status`: `active`, `inactive`, `suspended`.
 
-| Método | Rota | Permissão | Sucesso |
-| --- | --- | --- | --- |
-| GET | `/api/v1/users` | `users:list` | `200`, chave `users` |
-| POST | `/api/v1/users` | `users:create` | `201`, chave `user` |
-| GET | `/api/v1/users/{id}` | `users:view` | `200`, chave `user` |
-| PUT | `/api/v1/users/{id}` | `users:update` | `200`, chave `user` |
-| PATCH | `/api/v1/users/{id}` | `users:update` | `200`, chave `user` |
-| DELETE | `/api/v1/users/{id}` | `users:delete` | `200`, chave `user` |
+| Método | Rota                 | Permissão      | Sucesso              |
+| ------ | -------------------- | -------------- | -------------------- |
+| GET    | `/api/v1/users`      | `users:list`   | `200`, chave `users` |
+| POST   | `/api/v1/users`      | `users:create` | `201`, chave `user`  |
+| GET    | `/api/v1/users/{id}` | `users:view`   | `200`, chave `user`  |
+| PUT    | `/api/v1/users/{id}` | `users:update` | `200`, chave `user`  |
+| PATCH  | `/api/v1/users/{id}` | `users:update` | `200`, chave `user`  |
+| DELETE | `/api/v1/users/{id}` | `users:delete` | `200`, chave `user`  |
 
 Filtros da listagem: `name` (contém), `email` (igualdade exata), `status`, `created_at` (`YYYY-MM-DD`, dia UTC), `page`, `page_size`.
 
@@ -214,14 +214,14 @@ Criação:
 
 ```json
 {
-  "name": "Ana Lima",
-  "email": "ana@example.com",
-  "password": "password123",
-  "phone": "(11) 98765-4321",
-  "cpf": "529.982.247-25",
-  "avatar_url": null,
-  "status": "active",
-  "role_ids": []
+    "name": "Ana Lima",
+    "email": "ana@example.com",
+    "password": "password123",
+    "phone": "(11) 98765-4321",
+    "cpf": "529.982.247-25",
+    "avatar_url": null,
+    "status": "active",
+    "role_ids": []
 }
 ```
 
@@ -237,28 +237,28 @@ Erros comuns: `403` sem permissão, `404` usuário ou papel inexistente, `409` e
 
 ## Papéis
 
-| Método | Rota | Permissão | Sucesso |
-| --- | --- | --- | --- |
-| GET | `/api/v1/roles` | `roles:list` | `200`, chave `roles` |
-| POST | `/api/v1/roles` | `roles:create` | `201`, chave `role` |
-| GET | `/api/v1/roles/{id}` | `roles:view` | `200`, chave `role` |
-| PUT | `/api/v1/roles/{id}` | `roles:update` | `200`, chave `role` |
-| PATCH | `/api/v1/roles/{id}` | `roles:update` | `200`, chave `role` |
-| DELETE | `/api/v1/roles/{id}` | `roles:delete` | `200`, chave `role` |
+| Método | Rota                 | Permissão      | Sucesso              |
+| ------ | -------------------- | -------------- | -------------------- |
+| GET    | `/api/v1/roles`      | `roles:list`   | `200`, chave `roles` |
+| POST   | `/api/v1/roles`      | `roles:create` | `201`, chave `role`  |
+| GET    | `/api/v1/roles/{id}` | `roles:view`   | `200`, chave `role`  |
+| PUT    | `/api/v1/roles/{id}` | `roles:update` | `200`, chave `role`  |
+| PATCH  | `/api/v1/roles/{id}` | `roles:update` | `200`, chave `role`  |
+| DELETE | `/api/v1/roles/{id}` | `roles:delete` | `200`, chave `role`  |
 
 Filtros: `name` (contém), `scope` (`master` ou `tenant`), `is_system` (`true` ou `false`), `page`, `page_size`.
 
 ```json
 {
-  "id": "uuid",
-  "name": "editor",
-  "display_name": "Editor",
-  "description": null,
-  "scope": "master",
-  "is_system": false,
-  "permissions": ["forms:list", "forms:view"],
-  "created_at": "2026-09-29T20:00:00+00:00",
-  "updated_at": "2026-09-29T20:00:00+00:00"
+    "id": "uuid",
+    "name": "editor",
+    "display_name": "Editor",
+    "description": null,
+    "scope": "master",
+    "is_system": false,
+    "permissions": ["forms:list", "forms:view"],
+    "created_at": "2026-09-29T20:00:00+00:00",
+    "updated_at": "2026-09-29T20:00:00+00:00"
 }
 ```
 
@@ -276,13 +276,13 @@ O papel `user` do seed recebe `forms:list`, `forms:view`, `forms:create`, `respo
 
 Criar formulário exige `forms:create`. As permissões `forms:list`, `forms:view`, `forms:update`, `forms:delete`, `responses:list` e `responses:create` existem no catálogo, mas as rotas correspondentes não as consultam: usam o access token e a relação da pessoa com o formulário.
 
-Listagens de seções, perguntas, opções, membros e respostas também aceitam `page` e `page_size`.
+Listagens de seções, perguntas, opções, membros, respostas e favoritos também aceitam `page` e `page_size`.
 
 - Administrador (`*`) vê e altera tudo.
 - Quem cria o formulário vira `owner`.
 - `owner` edita estrutura, membros, status e vê todas as respostas.
 - `member` vê o formulário e responde. Não edita estrutura nem membros.
-- Formulário `published` pode ser lido e respondido sem autenticação. Rascunho e arquivado continuam visíveis só para quem participa ou administra. Resposta anônima grava `respondent_id` nulo e o nome "Visitante".
+- Formulário `published` pode ser lido e respondido por qualquer usuário autenticado.
 - Formulário `draft` ou `archived` só é visível para membros e administrador.
 - Estrutura de formulário `archived` não pode ser editada. Dá para mudar só o `status`, por exemplo de volta para `draft`.
 
@@ -290,27 +290,27 @@ Listagens de seções, perguntas, opções, membros e respostas também aceitam 
 
 ### Formulário
 
-| Método | Rota | Sucesso |
-| --- | --- | --- |
-| POST | `/api/v1/forms` | `201`, chave `form` |
-| GET | `/api/v1/forms` | `200`, chave `forms` |
-| GET | `/api/v1/forms/{id}` | `200`, chave `form`, com seções, perguntas e opções |
-| PATCH | `/api/v1/forms/{id}` | `200`, chave `form` |
-| DELETE | `/api/v1/forms/{id}` | `200`, `{ "id", "deleted": true }` |
+| Método | Rota                 | Sucesso                                             |
+| ------ | -------------------- | --------------------------------------------------- |
+| POST   | `/api/v1/forms`      | `201`, chave `form`                                 |
+| GET    | `/api/v1/forms`      | `200`, chave `forms`                                |
+| GET    | `/api/v1/forms/{id}` | `200`, chave `form`, com seções, perguntas e opções |
+| PATCH  | `/api/v1/forms/{id}` | `200`, chave `form`                                 |
+| DELETE | `/api/v1/forms/{id}` | `200`, `{ "id", "deleted": true }`                  |
 
 A listagem do administrador traz todos os formulários não excluídos. Os demais veem só aqueles em que participam. Filtros: `title` (contém), `status` (`draft`, `published`, `archived`), `page`, `page_size`. A listagem não aninha seções.
 
 ```json
 {
-  "id": "uuid",
-  "title": "Pesquisa interna",
-  "description": "Clima do time",
-  "status": "draft",
-  "created_by": "uuid",
-  "my_role": "owner",
-  "created_at": "2026-09-29T20:00:00+00:00",
-  "updated_at": "2026-09-29T20:00:00+00:00",
-  "sections": []
+    "id": "uuid",
+    "title": "Pesquisa interna",
+    "description": "Clima do time",
+    "status": "draft",
+    "created_by": "uuid",
+    "my_role": "owner",
+    "created_at": "2026-09-29T20:00:00+00:00",
+    "updated_at": "2026-09-29T20:00:00+00:00",
+    "sections": []
 }
 ```
 
@@ -322,18 +322,18 @@ Atualização parcial: `title`, `description`, `status`. Publicar (`status: "pub
 
 ### Seções
 
-| Método | Rota | Sucesso |
-| --- | --- | --- |
-| GET | `/api/v1/forms/{id}/sections` | `200`, chave `sections` |
-| POST | `/api/v1/forms/{id}/sections` | `201`, chave `section` |
-| PATCH | `/api/v1/sections/{id}` | `200`, chave `section` |
-| DELETE | `/api/v1/sections/{id}` | `200`, `{ "id", "deleted": true }` |
+| Método | Rota                          | Sucesso                            |
+| ------ | ----------------------------- | ---------------------------------- |
+| GET    | `/api/v1/forms/{id}/sections` | `200`, chave `sections`            |
+| POST   | `/api/v1/forms/{id}/sections` | `201`, chave `section`             |
+| PATCH  | `/api/v1/sections/{id}`       | `200`, chave `section`             |
+| DELETE | `/api/v1/sections/{id}`       | `200`, `{ "id", "deleted": true }` |
 
 ```json
 {
-  "title": "Geral",
-  "description": null,
-  "order": 0
+    "title": "Geral",
+    "description": null,
+    "order": 0
 }
 ```
 
@@ -341,19 +341,19 @@ Atualização parcial: `title`, `description`, `status`. Publicar (`status: "pub
 
 ### Perguntas
 
-| Método | Rota | Sucesso |
-| --- | --- | --- |
-| GET | `/api/v1/sections/{id}/questions` | `200`, chave `questions` |
-| POST | `/api/v1/sections/{id}/questions` | `201`, chave `question` |
-| PATCH | `/api/v1/questions/{id}` | `200`, chave `question` |
-| DELETE | `/api/v1/questions/{id}` | `200`, `{ "id", "deleted": true }` |
+| Método | Rota                              | Sucesso                            |
+| ------ | --------------------------------- | ---------------------------------- |
+| GET    | `/api/v1/sections/{id}/questions` | `200`, chave `questions`           |
+| POST   | `/api/v1/sections/{id}/questions` | `201`, chave `question`            |
+| PATCH  | `/api/v1/questions/{id}`          | `200`, chave `question`            |
+| DELETE | `/api/v1/questions/{id}`          | `200`, `{ "id", "deleted": true }` |
 
 ```json
 {
-  "title": "Como foi o dia?",
-  "type": "short",
-  "required": true,
-  "order": 0
+    "title": "Como foi o dia?",
+    "type": "short",
+    "required": true,
+    "order": 0
 }
 ```
 
@@ -363,15 +363,15 @@ Atualização parcial: `title`, `description`, `status`. Publicar (`status: "pub
 
 ### Opções
 
-| Método | Rota | Sucesso |
-| --- | --- | --- |
-| GET | `/api/v1/questions/{id}/options` | `200`, chave `options` |
-| POST | `/api/v1/questions/{id}/options` | `201`, chave `option` |
-| PATCH | `/api/v1/options/{id}` | `200`, chave `option` |
-| DELETE | `/api/v1/options/{id}` | `200`, `{ "id", "deleted": true }` |
+| Método | Rota                             | Sucesso                            |
+| ------ | -------------------------------- | ---------------------------------- |
+| GET    | `/api/v1/questions/{id}/options` | `200`, chave `options`             |
+| POST   | `/api/v1/questions/{id}/options` | `201`, chave `option`              |
+| PATCH  | `/api/v1/options/{id}`           | `200`, chave `option`              |
+| DELETE | `/api/v1/options/{id}`           | `200`, `{ "id", "deleted": true }` |
 
 ```json
-{ "value": "Bom", "order": 0 }
+{"value": "Bom", "order": 0}
 ```
 
 `value` de 1 a 300. Criar opção em pergunta de texto responde `422`. Uma pergunta de escolha publicada precisa manter ao menos duas opções.
@@ -380,47 +380,47 @@ Atualização parcial: `title`, `description`, `status`. Publicar (`status: "pub
 
 Só owner ou administrador.
 
-| Método | Rota | Sucesso |
-| --- | --- | --- |
-| GET | `/api/v1/forms/{id}/members` | `200`, chave `members` |
-| POST | `/api/v1/forms/{id}/members` | `201`, chave `member` |
-| PATCH | `/api/v1/forms/{id}/members/{user_id}` | `200`, chave `member` |
+| Método | Rota                                   | Sucesso                                 |
+| ------ | -------------------------------------- | --------------------------------------- |
+| GET    | `/api/v1/forms/{id}/members`           | `200`, chave `members`                  |
+| POST   | `/api/v1/forms/{id}/members`           | `201`, chave `member`                   |
+| PATCH  | `/api/v1/forms/{id}/members/{user_id}` | `200`, chave `member`                   |
 | DELETE | `/api/v1/forms/{id}/members/{user_id}` | `200`, `{ "user_id", "deleted": true }` |
 
 ```json
-{ "user_id": "uuid", "role": "member" }
+{"user_id": "uuid", "role": "member"}
 ```
 
 `role`: `owner` ou `member`. O usuário precisa existir e estar ativo. Não dá para repetir um membro nem remover ou rebaixar o último owner.
 
 ```json
 {
-  "id": "uuid",
-  "form_id": "uuid",
-  "user_id": "uuid",
-  "user_name": "Ana Lima",
-  "user_email": "ana@example.com",
-  "role": "member",
-  "created_at": "2026-09-29T20:00:00+00:00"
+    "id": "uuid",
+    "form_id": "uuid",
+    "user_id": "uuid",
+    "user_name": "Ana Lima",
+    "user_email": "ana@example.com",
+    "role": "member",
+    "created_at": "2026-09-29T20:00:00+00:00"
 }
 ```
 
 ### Respostas
 
-| Método | Rota | Quem | Sucesso |
-| --- | --- | --- | --- |
-| POST | `/api/v1/forms/{id}/responses` | Usuário autenticado, formulário publicado | `201`, chave `response` |
-| GET | `/api/v1/forms/{id}/responses` | Owner e admin veem todas; os demais veem as próprias | `200`, chave `responses` |
-| GET | `/api/v1/forms/{id}/responses/{id}` | Owner, admin ou autor | `200`, chave `response` |
-| DELETE | `/api/v1/forms/{id}/responses/{id}` | Owner, admin ou autor | `200`, `{ "id", "deleted": true }` |
+| Método | Rota                                | Quem                                                 | Sucesso                            |
+| ------ | ----------------------------------- | ---------------------------------------------------- | ---------------------------------- |
+| POST   | `/api/v1/forms/{id}/responses`      | Usuário autenticado, formulário publicado            | `201`, chave `response`            |
+| GET    | `/api/v1/forms/{id}/responses`      | Owner e admin veem todas; os demais veem as próprias | `200`, chave `responses`           |
+| GET    | `/api/v1/forms/{id}/responses/{id}` | Owner, admin ou autor                                | `200`, chave `response`            |
+| DELETE | `/api/v1/forms/{id}/responses/{id}` | Owner, admin ou autor                                | `200`, `{ "id", "deleted": true }` |
 
 ```json
 {
-  "answers": [
-    { "question_id": "uuid-da-pergunta-texto", "value": "Foi um bom dia" },
-    { "question_id": "uuid-da-escolha-unica", "value": "uuid-da-opcao" },
-    { "question_id": "uuid-do-checkbox", "value": ["uuid-da-opcao-a", "uuid-da-opcao-b"] }
-  ]
+    "answers": [
+        {"question_id": "uuid-da-pergunta-texto", "value": "Foi um bom dia"},
+        {"question_id": "uuid-da-escolha-unica", "value": "uuid-da-opcao"},
+        {"question_id": "uuid-do-checkbox", "value": ["uuid-da-opcao-a", "uuid-da-opcao-b"]}
+    ]
 }
 ```
 
@@ -428,17 +428,125 @@ Só owner ou administrador.
 
 ```json
 {
-  "id": "uuid",
-  "form_id": "uuid",
-  "respondent_id": "uuid",
-  "respondent_name": "Ana Lima",
-  "respondent_email": "ana@example.com",
-  "answers": [{ "question_id": "uuid", "value": "Foi um bom dia" }],
-  "created_at": "2026-09-29T20:00:00+00:00"
+    "id": "uuid",
+    "form_id": "uuid",
+    "respondent_id": "uuid",
+    "respondent_name": "Ana Lima",
+    "respondent_email": "ana@example.com",
+    "answers": [{"question_id": "uuid", "value": "Foi um bom dia", "favorited": false}],
+    "created_at": "2026-09-29T20:00:00+00:00"
 }
 ```
 
-O JSON das respostas fica criptografado no banco.
+`favorited` diz se aquela resposta da pergunta está marcada para o relatório. O JSON das respostas fica criptografado no banco. A marcação não entra nesse JSON.
+
+### Favoritos
+
+Só owner ou administrador. Formulário em rascunho responde `422`. Publicado e arquivado aceitam. Só perguntas `short` e `long`, e a resposta precisa ter texto para essa pergunta. Marcar de novo a mesma pergunta na mesma resposta devolve o favorito já existente, com `200`.
+
+| Método | Rota                                                        | Sucesso                                                      |
+| ------ | ----------------------------------------------------------- | ------------------------------------------------------------ |
+| POST   | `/api/v1/forms/{id}/responses/{id}/favorites`               | `201` na primeira vez, `200` se já existia, chave `favorite` |
+| DELETE | `/api/v1/forms/{id}/responses/{id}/favorites/{question_id}` | `200`, `{ "id", "deleted": true }`                           |
+| GET    | `/api/v1/forms/{id}/favorites`                              | `200`, chave `favorites`                                     |
+| GET    | `/api/v1/forms/{id}/favorites/summary`                      | `200`, chave `favorite_summary`                              |
+
+```json
+{"question_id": "uuid-da-pergunta-texto"}
+```
+
+```json
+{
+    "id": "uuid",
+    "form_response_id": "uuid",
+    "question_id": "uuid",
+    "favorited_by": "uuid",
+    "created_at": "2026-09-30T18:00:00+00:00"
+}
+```
+
+A lista aceita `question_id`, `page` e `page_size`. Cada item traz o texto só da pergunta favoritada. A consulta parte da tabela de favoritos e descriptografa apenas a página.
+
+```json
+{
+    "id": "uuid",
+    "form_response_id": "uuid",
+    "question_id": "uuid",
+    "value": "Foi um bom dia",
+    "respondent_id": "uuid",
+    "respondent_name": "Ana Lima",
+    "favorited_by": "uuid",
+    "created_at": "2026-09-30T18:00:00+00:00"
+}
+```
+
+O resumo não é paginado: é um único objeto, com uma entrada por pergunta `short` ou `long` do formulário, inclusive quando ninguém favoritou.
+
+```json
+{
+    "form_id": "uuid",
+    "total_responses": 120,
+    "questions": [
+        {
+            "question_id": "uuid",
+            "title": "Como foi o dia?",
+            "total_favorited": 18,
+            "percentage": 15.0
+        }
+    ]
+}
+```
+
+`percentage` é `total_favorited / total_responses * 100`, com até duas casas. O denominador é o total de respostas não excluídas do formulário. Pergunta opcional entra nessa conta mesmo quando a pessoa não escreveu texto. Desfavoritar apaga a linha. Excluir a resposta também apaga os favoritos dela.
+
+### Relatório
+
+Só owner ou administrador. Rascunho responde `422`. Publicado e arquivado aceitam. É um único objeto, sem paginação.
+
+| Método | Rota                        | Sucesso               |
+| ------ | --------------------------- | --------------------- |
+| GET    | `/api/v1/forms/{id}/report` | `200`, chave `report` |
+
+```json
+{
+    "form_id": "uuid",
+    "total_responses": 10,
+    "questions": [
+        {
+            "question_id": "uuid",
+            "title": "Nota",
+            "type": "radio",
+            "chart": "pie",
+            "options": [{"option_id": "uuid", "value": "Baixa", "abs": 5, "percent": 50.0}]
+        },
+        {
+            "question_id": "uuid",
+            "title": "Temas",
+            "type": "checkbox",
+            "chart": "bar",
+            "options": [{"option_id": "uuid", "value": "Prazo", "abs": 8, "percent": 80.0}]
+        },
+        {
+            "question_id": "uuid",
+            "title": "Como foi o dia?",
+            "type": "short",
+            "chart": "starred",
+            "percent_starred": 60.0,
+            "starred_responses": [
+                {
+                    "form_response_id": "uuid",
+                    "value": "Foi um bom dia",
+                    "respondent_name": "Ana Lima"
+                }
+            ]
+        }
+    ]
+}
+```
+
+`chart` é `pie` para `radio`, `select` e `classification`, `bar` para `checkbox` e `starred` para `short` e `long`. Pergunta de escolha não traz `percent_starred`. Pergunta de texto não traz `options`. Opção sem marcação continua na lista, com `abs` zero.
+
+Na pizza, o denominador é quem escolheu uma opção que ainda existe. Quem pulou a pergunta fica de fora, e as fatias fecham em 100%, salvo arredondamento de duas casas. Na barra, o denominador é quem marcou ao menos uma opção ainda existente. Cada `percent` é as marcações daquela opção sobre esse total, então a soma pode passar de 100%. `percent_starred` usa o total de respostas do formulário, como o resumo de favoritos. A lista traz só os textos marcados, do favorito mais recente para o mais antigo, sem e-mail.
 
 ## Exemplo encadeado
 

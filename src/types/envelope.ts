@@ -1,4 +1,4 @@
-import type { FormSummary, Member, OptionItem, Question, Role, Section, Submission, User } from "@/types/domain";
+import type { FormReport, FormSummary, Member, OptionItem, Question, Role, Section, Submission, User } from "@/types/domain";
 
 export interface Pagination {
   page: number;
@@ -37,6 +37,7 @@ export interface Envelope {
   members?: Member[];
   response?: Submission;
   responses?: Submission[];
+  report?: FormReport;
 }
 
 export function failureEnvelope(status: number, message: string, errorCode: string): Envelope {

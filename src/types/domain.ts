@@ -86,6 +86,7 @@ export interface Member {
 export interface Answer {
   question_id: string;
   value: string | string[];
+  favorited?: boolean;
 }
 
 export interface Submission {
@@ -96,4 +97,35 @@ export interface Submission {
   respondent_email: string;
   answers: Answer[];
   created_at: string;
+}
+
+export type ReportChart = "pie" | "bar" | "starred";
+
+export interface ReportOption {
+  option_id: string;
+  value: string;
+  abs: number;
+  percent: number;
+}
+
+export interface StarredResponse {
+  form_response_id: string;
+  value: string;
+  respondent_name: string;
+}
+
+export interface ReportQuestion {
+  question_id: string;
+  title: string;
+  type: QuestionType;
+  chart: ReportChart;
+  options?: ReportOption[];
+  percent_starred?: number;
+  starred_responses?: StarredResponse[];
+}
+
+export interface FormReport {
+  form_id: string;
+  total_responses: number;
+  questions: ReportQuestion[];
 }

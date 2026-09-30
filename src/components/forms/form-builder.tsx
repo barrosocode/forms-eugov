@@ -112,6 +112,7 @@ export function FormBuilder({ formId }: { formId: string }) {
         <FormStatusBadge status={form.status} />
         <div className="flex flex-wrap gap-2">
           <Link href={`/forms/${formId}/responses`} className="rounded-lg border border-border px-3 py-2 text-sm">Respostas</Link>
+          {canEdit ? <Link href={`/forms/${formId}/report`} className="rounded-lg border border-border px-3 py-2 text-sm">Relatório</Link> : null}
           <Link href={`/f/${formId}`} className="rounded-lg border border-border px-3 py-2 text-sm">Página de resposta</Link>
           <ShareFormButton formId={formId} title={form.title} />
         </div>
