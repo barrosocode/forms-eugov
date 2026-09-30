@@ -1,0 +1,35 @@
+{
+  "module": "forms",
+  "description": "Formulários internos da Jabatec, no estilo de um construtor de pesquisas.",
+  "features": ["list", "view", "create", "update", "patch", "delete"],
+  "pagination": {"default_per_page": 15, "max_per_page": 100},
+  "filters": ["title", "status"],
+  "model": {
+    "name": "Form",
+    "table": "forms",
+    "fields": [
+      {"name": "id", "type": "uuid", "primary_key": true, "nullable": false, "encrypt": false, "lgpd_classification": "none"},
+      {"name": "title", "type": "string", "length": 200, "nullable": false, "encrypt": false, "validation": ["required", "min:3", "max:200"], "lgpd_classification": "none"},
+      {"name": "description", "type": "text", "nullable": true, "encrypt": false, "validation": ["nullable", "max:5000"], "lgpd_classification": "none"},
+      {"name": "status", "type": "enum", "options": ["draft", "published", "archived"], "default": "draft", "nullable": false, "index": true, "encrypt": false, "lgpd_classification": "none"},
+      {"name": "created_by", "type": "uuid", "nullable": false, "index": true, "encrypt": false, "lgpd_classification": "none"},
+      {"name": "created_at", "type": "timestamp", "nullable": false, "encrypt": false, "lgpd_classification": "none"},
+      {"name": "updated_at", "type": "timestamp", "nullable": false, "encrypt": false, "lgpd_classification": "none"},
+      {"name": "deleted_at", "type": "timestamp", "nullable": true, "encrypt": false, "lgpd_classification": "none"}
+    ],
+    "relationships": [
+      {"type": "belongsTo", "model": "User", "fk": "created_by"},
+      {"type": "hasMany", "model": "Section", "fk": "form_id"},
+      {"type": "hasMany", "model": "FormMembership", "fk": "form_id"},
+      {"type": "hasMany", "model": "FormResponse", "fk": "form_id"}
+    ],
+    "events": []
+  },
+  "permissions": {
+    "list": ["admin", "user"],
+    "view": ["admin", "user"],
+    "create": ["admin", "user"],
+    "update": ["admin", "owner"],
+    "delete": ["admin", "owner"]
+  }
+}
